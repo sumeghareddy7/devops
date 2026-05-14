@@ -25,8 +25,9 @@ steps:
   displayName: Build Docker
 
 - script: |
-    docker push $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(ECR_REPOSITORY):$(imageTag)
-  displayName: Push Image
+    docker build -t ecs-demo .
+    docker tag ecs-demo:latest $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(ECR_REPOSITORY):$(imageTag)
+  displayName: Build Docker
 
 - script: |
     aws ecs update-service \
