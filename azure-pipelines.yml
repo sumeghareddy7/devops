@@ -8,7 +8,6 @@ variables:
   imageTag: '$(Build.BuildId)'
 
 steps:
-
 - script: |
     aws configure set aws_access_key_id $(AWS_ACCESS_KEY_ID)
     aws configure set aws_secret_access_key $(AWS_SECRET_ACCESS_KEY)
@@ -20,14 +19,14 @@ steps:
   displayName: Login ECR
 
 - script: |
-    docker build -t ecs-demo .
-    docker tag ecs-demo:latest $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(ECR_REPOSITORY):$(imageTag)
+    IMAGE_URI="$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(ECR_REPOSITORY):$(imageTag)"
+    docker build -t "$IMAGE_URI" .
   displayName: Build Docker
 
 - script: |
-    docker build -t ecs-demo .
-    docker tag ecs-demo:latest $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(ECR_REPOSITORY):$(imageTag)
-  displayName: Build Docker
+    IMAGE_URI="$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(ECR_REPOSITORY):$(imageTag)"
+    docker push "$IMAGE_URI"
+  displayName: Push Image
 
 - script: |
     aws ecs update-service \
